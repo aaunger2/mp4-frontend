@@ -30,7 +30,8 @@ function App({}) {
     queryKey: ['data'],
     queryFn: async () => {
       const response = await fetch(FETCH_EVENTS_URL);
-      return response.json;
+      console.log("response: ", response)
+      return response;
     }
   });
 
