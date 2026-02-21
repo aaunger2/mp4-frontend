@@ -15,7 +15,7 @@ const ADD_EVENT_URL = `${API_BASE}/events`;
 
 
 // TODO: Implement this function to fetch event data from your backend. Return the parsed JSON (an array of event objects)
-// HINT: Use the `fetch()` API and handle errors appropriately.
+// HINT: Use the `fetch()` API and handle errors appropriately. lol, or not
 const fetchEvents = async () => {};
 
 
@@ -26,19 +26,45 @@ function App({}) {
 
   // TODO: Use TanStack Query's `useQuery` hook to fetch events from your backend.
   // HINT: `queryKey` and a `queryFn`
-  const { data: events = [], isLoading, error } = useQuery({});
+  const { data: events = [], isLoading, error } = useQuery({
+    queryKey: ['data'],
+    queryFn: async () => {
+      const response = await fetch(FETCH_EVENTS_URL);
+      return response.json;
+    }
+  });
 
   // TODO: Implement this function to send a POST request to your backend to add a new event.
   // HINT: Use the `fetch()` API and implement error handling.
-  const addEvent = async (newEvent) => {};
+  const addEvent = async (newEvent) => {
+     const response = await fetch(ADD_EVENT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newEvent),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    return response.json();
+  };
 
   // TODO: Use `useMutation` from TanStack Query to call your `addEvent` function.
   // HINT: On success, invalidate the query (so 'events' can be refeteched and updated) and close the form pop-up.
-  const mutation = useMutation({});
+  const mutation = useMutation({mutationFn: addEvent,
+    onSuccess: () => {
+      // Invalidate and refetch the 'posts' list after a successful creation
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },});
 
   // TODO: Call your mutation function to trigger the event addition.
   // HINT: Use `mutation.mutate()`.
-  const handleAddEvent = (newEvent) => {};
+  const handleAddEvent = (newEvent) => {
+    mutation.mutate(newEvent);
+  };
 
 
   return (
