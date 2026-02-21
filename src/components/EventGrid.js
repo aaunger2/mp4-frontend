@@ -5,7 +5,7 @@ import './EventGrid.css';
 export default function EventGrid({query, events}) {
     const safeQuery = query?.toLowerCase() || '';
     console.log("events ", events);
-    const safeEvents = events && Array.isArray(events.data) ? events : [];
+    const safeEvents = events && Array.isArray(events.data) ? events.data : [];
     console.log("safe events ", safeEvents);
 
     const filteredEvents = safeEvents.filter((event) => {
